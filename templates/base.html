@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Manange Goals</title>
+    </head>
+    <body>
+        <body style="background-color:#93dde6;">
+
+            {% for flash in get_flashed_messages() %}
+              {{ flash }}
+            {% endfor %}
+
+            {% block content %}
+              Put your body here.
+            {% endblock %}
+
+            {% block script %}
+  <!-- Put your javascript script tags here. -->
+            {% endblock %}
+
+    </body>
+</html>
