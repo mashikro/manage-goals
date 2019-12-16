@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Edit your goal</h2>
+
+Goal to edit: {{ goal_to_edit.goal_text }}
+
+
+    
+<form action='/edit-goal/{{ goal_to_edit.goal_id }}' method='POST'>
+    <div>
+        <label> 
+            Edit your goal:
+            <br />
+            <textarea rows="4" cols="50" name="new_goal" autocomplete="off"></textarea>
+        </label>
+    </div>
+    
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+
+</form>
+
+
+{% endblock %}
