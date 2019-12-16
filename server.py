@@ -18,10 +18,21 @@ app.jinja_env.undefined = StrictUndefined #to prevent silent but deadly jinja er
 ######################### ROUTES #####################################
 @app.route('/') 
 def index():
-    '''Index. User can either 'create an account' or 'login here' '''
+    '''Index. User can either go to 'create an account' or 'login' page '''
     
     return render_template('index.html') 
 
+@app.route('/create-account', methods=['GET']) 
+def create_account():
+    '''Create Account page. '''
+    
+    return render_template('create_account.html') 
+
+@app.route('/login', methods=['GET']) 
+def login_user():
+    '''Login page. '''
+    
+    return render_template('login.html') 
 
 @app.route('/create-account', methods=['POST'])
 def create_user_process():
@@ -29,7 +40,7 @@ def create_user_process():
 
 # Will get all this info back:
     email = request.form.get('email')
-    password_hash = request.form.get('password')
+    password = request.form.get('password')
     fname = request.form.get('fname')
     lname = request.form.get('lname')
    
@@ -86,6 +97,69 @@ def login_process():
         flash('Oops :0 Incorrect password! Please try again :)')
         return redirect('/')
 
+@app.route('/home', methods=['GET'])
+def show_homepage():
+    '''Homepage. Users can add a goal here'''
+
+    user_id = session.get('user_id')
+
+    if user_id:
+        return render_template('home.html')
+    else:
+        return redirect('/')
+
+@app.route('/home', methods=['POST'])
+def process_goal():
+    '''Process user's goals and save in backend'''
+
+    goal_text = request.form.get('goal_text')
+
+    new_goal = UserGoals(user_id = session['user_id'],
+                        goal_text = goal_text)
+
+
+    db.session.add(new_goal)
+    db.session.commit()
+
+    return redirect('/history')
+
+@app.route('/history', methods=['GET'])
+def show_history_page():
+    '''History page. Users can view all their goals here'''
+
+    user_id = session.get('user_id')
+
+    user_goals = UserGoals.query.filter_by(user_id=user_id)
+
+    if user_id:
+        return render_template('history.html', 
+                                user_goals=user_goals)
+
+    else:
+        return redirect('/')
+
+@app.route('/edit-goal/<int:goal_id>')
+def edit_goal(goal_id):
+
+    goal_to_edit=UserGoals.query.filter_by(goal_id=goal_id).first()
+
+    return render_template('edit_goal.html', goal_to_edit=goal_to_edit)
+
+@app.route('/edit-goal/<int:goal_id>', methods=['POST'])
+def edit_goal_process(goal_id):
+    '''Change goal in db'''
+
+    new_goal = request.form.get('new_goal')
+
+    print('NEWWW GOALLLLL', new_goal)
+
+    goal_to_edit=UserGoals.query.filter_by(goal_id=goal_id).first()
+
+    goal_to_edit.goal_text = new_goal
+
+    db.session.commit()
+
+    return redirect('/history')
 
 #each goal will have an edit link (like details link from project)
 #in that link users will fill our a form which I will process based on goal id
@@ -94,7 +168,7 @@ def login_process():
 ####################### RUNNING MY SERVER ###############################
 if __name__ == "__main__":
    
-    app.debug=False # We have to set debug=True here, since it has to be True at the point that we invoke the DebugToolbarExtension
+    app.debug=True # We have to set debug=True here, since it has to be True at the point that we invoke the DebugToolbarExtension
 
     connect_to_db(app, "goals")
 
