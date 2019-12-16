@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Make a goal</h2>
+<form action='/home' method='POST'>
+    <div>
+        <label> 
+            Write down any goals you have:
+            <br />
+            <textarea rows="4" cols="50" name="goal_text" autocomplete="off"></textarea>
+        </label>
+    </div>
+    
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+
+</form>
+
+{% endblock %}
