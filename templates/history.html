@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Goals History</h2>
+    <ul>
+        {% for goal in user_goals %}
+        <ul> 
+            <li> Goal: {{ goal.goal_text }}</li>
+            <li> <a href="/edit-goal/{{ goal.goal_id }}">Edit Goal</a> </li>
+            <br>
+        </ul>
+        {% endfor %}
+    </ul>
+{% endblock %}
